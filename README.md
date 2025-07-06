@@ -6,7 +6,7 @@
 
 <h2>Project Screenshots:</h2>
 
-<img src="[https://github.com/soulmajor1/soulcore-gantt-chart/blob/main/Capssture.JPG?raw=true](https://raw.githubusercontent.com/soulmajor1/Primavera-P6-Xer-Viewer/refs/heads/main/Screenshot%202025-07-06%20205942.jpg)" alt="project-screenshot" width="1084" height="400">
+<img src="https://raw.githubusercontent.com/soulmajor1/Primavera-P6-Xer-Viewer/refs/heads/main/Screenshot%202025-07-06%20205942.jpg" alt="project-screenshot" width="1084" height="400">
 
 <a href="https://nowpayments.io/donation?api_key=3NZQEGQ-JSCM5XP-H584B3K-F5TWE4R" target="_blank" rel="noreferrer noopener">
    <img src="https://nowpayments.io/images/embeds/donation-button-white.svg" alt="Cryptocurrency & Bitcoin donation button by NOWPayments">
