@@ -1,0 +1,591 @@
+/* General Body and Container Styles */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    margin: 0;
+    background-color: #f4f4f4;
+    color: #333;
+    overflow: hidden; /* Prevent body scrollbars */
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.top-bar {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    background-color: #fff;
+    border-bottom: 1px solid #ccc;
+}
+
+.top-bar-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 16px;
+}
+
+.gantt-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 16px; /* Increased gap */
+}
+
+/* New styles for the toolbar controls */
+.gantt-scale-selector, .gantt-zoom-controls {
+    display: flex;
+    align-items: center;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 0;
+    overflow: hidden; /* Ensures child borders are contained */
+}
+
+.gantt-scale-selector .icon {
+    padding: 0 10px;
+    color: #495057;
+    background-color: #e9ecef;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    border-right: 1px solid #dee2e6;
+}
+
+#gantt-scale-select {
+    border: none;
+    background-color: transparent;
+    padding: 6px 10px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #495057;
+    cursor: pointer;
+    -webkit-appearance: none; /* Removes default chrome and safari style */
+    -moz-appearance: none; /* Removes default firefox style */
+    appearance: none;
+    padding-right: 25px; /* space for arrow */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 12px;
+}
+
+#gantt-scale-select:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.gantt-zoom-controls button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #495057;
+    transition: background-color 0.15s ease-in-out;
+}
+
+.gantt-zoom-controls button:hover {
+    background-color: #e9ecef;
+}
+
+.gantt-zoom-controls button:first-child {
+    border-right: 1px solid #dee2e6;
+}
+
+.gantt-zoom-controls i {
+    font-size: 16px;
+}
+
+/* Project Info Table */
+.project-table-container {
+    padding: 16px;
+    background-color: #fff;
+    border-bottom: 1px solid #ccc;
+}
+
+.project-table-header, .project-info-row {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr 1fr 1fr 1fr;
+    gap: 16px;
+    padding: 8px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.project-table-header {
+    font-weight: bold;
+    color: #555;
+}
+
+/* Main Layout */
+.main-container {
+    display: flex;
+    flex-direction: row; /* Ensure horizontal layout */
+    height: calc(100vh - 180px); /* Adjust based on header/footer height */
+    border-top: 1px solid #ccc;
+    overflow: hidden; /* Prevent container overflow */
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+/* WBS/Task List Specific Styles */
+.wbs-container {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 600px; /* Let flexbox manage size, starting at 600px */
+    min-width: 300px; /* Prevent it from disappearing */
+    background-color: #fff;
+    overflow: hidden; /* Hide internal overflow, scrolling is handled by wbs-rows */
+}
+
+.wbs-header {
+    display: flex;
+    font-weight: bold;
+    background-color: #f7f7f7;
+    border-bottom: 1px solid #ccc;
+    height: 60px; /* Match timeline header height */
+}
+
+.wbs-cell-header {
+    padding: 10px;
+    border-right: 1px solid #ccc;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    height: 60px; /* Match timeline header height */
+    line-height: 1.2; /* Allow text wrapping */
+}
+.wbs-cell-header:last-child { border-right: none; }
+
+.wbs-rows {
+    flex-grow: 1;
+    overflow-x: hidden; /* No horizontal scroll */
+    overflow-y: auto; /* Vertical scroll only */
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-top: none;
+    box-sizing: border-box;
+    /* Ensure scrollbar is visible */
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f1f1f1;
+}
+
+.wbs-rows::-webkit-scrollbar {
+    width: 8px;
+}
+
+.wbs-rows::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.wbs-rows::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.wbs-rows::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Ensure perfect alignment - no fractional pixels */
+.wbs-rows, .gantt-body {
+    line-height: 1; /* Prevent line-height variations */
+}
+
+.wbs-rows > *, .gantt-bars > * {
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+/* Force exact pixel alignment */
+.wbs-container, .gantt-container {
+    contain: layout; /* Optimize rendering */
+}
+
+.wbs-row {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    box-sizing: border-box; /* Include border in height calculation */
+}
+.wbs-row:hover { background-color: #f0f8ff; }
+
+/* Bold summary task rows like in Primavera */
+.summary-task-row {
+    font-weight: bold;
+    background-color: #eef2f7; /* A light blue for distinction */
+}
+
+.wbs-cell {
+    padding: 8px 10px;
+    box-sizing: border-box;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: 40px; /* Match row height exactly */
+    line-height: 24px; /* Adjusted for new padding */
+    display: flex;
+    align-items: center;
+}
+
+/* --- Cell Alignment --- */
+/* #: Center */
+.wbs-cell-header:nth-child(1), .wbs-row .wbs-cell:nth-child(1) {
+    justify-content: center;
+}
+/* Activity ID, Name, Start, Finish: Left (default) */
+.wbs-cell-header:nth-child(2), .wbs-row .wbs-cell:nth-child(2),
+.wbs-cell-header:nth-child(3), .wbs-row .wbs-cell:nth-child(3),
+.wbs-cell-header:nth-child(7), .wbs-row .wbs-cell:nth-child(7),
+.wbs-cell-header:nth-child(8), .wbs-row .wbs-cell:nth-child(8) {
+    justify-content: flex-start;
+}
+/* Budgeted, Original, Remaining: Right */
+.wbs-cell-header:nth-child(4), .wbs-row .wbs-cell:nth-child(4),
+.wbs-cell-header:nth-child(5), .wbs-row .wbs-cell:nth-child(5),
+.wbs-cell-header:nth-child(6), .wbs-row .wbs-cell:nth-child(6) {
+    justify-content: flex-end;
+}
+
+/* Gantt Container Specific Styles */
+.gantt-container {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow: hidden;
+    min-width: 0;
+}
+
+.timeline-header {
+    position: relative;
+    height: 60px;
+    background-color: #f7f7f7;
+    border-bottom: 1px solid #ccc;
+    flex-shrink: 0;
+    overflow: hidden; /* No scrolling on timeline header itself */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+/* New scroll wrapper for Gantt content */
+.gantt-scroll-wrapper {
+    flex-grow: 1;
+    overflow: hidden; /* No scrolling here anymore */
+    position: relative;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-top: none; /* Connect with timeline header */
+}
+
+.gantt-body {
+    height: 100%; /* Take full height of wrapper */
+    overflow-x: hidden; /* No horizontal scroll here */
+    overflow-y: auto; /* Add vertical scroll back */
+    position: relative;
+    background-color: #fff;
+    box-sizing: border-box;
+    min-width: max-content; /* Ensure content width */
+    /* Ensure scrollbar is visible */
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f1f1f1;
+}
+
+.gantt-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.gantt-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.gantt-body::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.gantt-body::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Separate horizontal scroll bar */
+.horizontal-scroll-container {
+    display: flex;
+    height: 20px; /* Height of scroll bar */
+    background-color: #f7f7f7;
+    border-top: 1px solid #ccc;
+}
+
+.horizontal-scroll-spacer {
+    /* This width needs to be adjusted by JS now */
+    background-color: #f7f7f7;
+    border-right: 1px solid #ccc;
+    flex-shrink: 0;
+}
+
+.horizontal-scroll-bar {
+    flex-grow: 1;
+    overflow-x: auto;
+    overflow-y: hidden;
+    background-color: #fff;
+}
+
+.horizontal-scroll-content {
+    min-height: 1px; /* Allow scrollbar to appear */
+}
+
+/* Remove the old static background grid */
+.gantt-body.with-grid {
+    background-image: none;
+}
+
+.gantt-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    z-index: 0; /* Behind the bars */
+}
+
+.grid-cell {
+    height: 100%;
+    box-sizing: border-box;
+    border-right: 1px solid #eef2f7; /* Lighter color for grid lines */
+}
+.grid-cell:last-child {
+    border-right: none;
+}
+
+.timeline-header .timeline-row {
+    white-space: nowrap;
+    display: flex; /* Ensure cells line up */
+}
+.gantt-bars {
+    position: relative; /* was block, now needs to be relative to establish stacking context */
+    z-index: 1; /* On top of the grid */
+    min-width: 100%;
+    box-sizing: border-box;
+}
+
+.gantt-row-container {
+    display: flex;
+    height: 40px; /* CRITICAL: Must match ganttConfig.rowHeight and .wbs-row */
+    min-height: 40px; /* Ensure minimum height */
+    max-height: 40px; /* Prevent height variations */
+    box-sizing: border-box; /* Include border in height calculation */
+    border-bottom: 1px solid #eee;
+    position: relative;
+    margin: 0; /* Remove any margin */
+    padding: 0; /* Remove any padding */
+    flex-shrink: 0; /* Prevent shrinking */
+}
+.gantt-row-container:hover { background-color: #f0f8ff; }
+
+/* --- Timeline Header Styles --- */
+.timeline-row {
+    position: relative;
+    height: 30px;
+    display: flex;
+    /* Prevent timeline cells from wrapping or shrinking */
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+    /* Allow timeline to extend beyond container width */
+    min-width: 100%;
+    width: max-content;
+    border-bottom: 1px solid #ccc;
+}
+
+.timeline-row:first-child {
+    background-color: #e8e8e8;
+}
+
+.timeline-row:last-child {
+    background-color: #f2f2f2;
+    border-bottom: none;
+}
+
+.timeline-cell {
+    border-right: 1px solid #ccc;
+    text-align: center;
+    font-size: 12px;
+    line-height: 30px;
+    font-weight: 500;
+    box-sizing: border-box;
+    overflow: hidden;
+    white-space: nowrap;
+    /* Critical: Prevent any size variations */
+    flex-shrink: 0;
+    flex-grow: 0;
+    /* Ensure perfect pixel alignment */
+    margin: 0;
+    padding: 0 2px; /* Small padding for text readability */
+}
+
+.timeline-cell:last-child {
+    border-right: none;
+}
+
+/* --- Gantt Bars --- */
+.task-bar {
+    position: absolute;
+    height: 18px;
+    top: 11px; /* Center in 40px row: (40-18)/2 = 11px */
+    background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+    border: 1px solid #2c5aa0;
+    border-radius: 2px;
+    box-sizing: border-box;
+    white-space: nowrap;
+    overflow: hidden;
+    color: white;
+    font-size: 11px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    padding: 0 6px;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.task-bar:hover {
+    background: linear-gradient(135deg, #5ba0f2 0%, #4570cd 100%);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.summary-task {
+    background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+    border-color: #1a252f;
+    height: 12px;
+    top: 14px; /* Center in 40px row: (40-12)/2 = 14px */
+    border-radius: 0;
+    position: relative;
+}
+
+.summary-task::before, .summary-task::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    margin-top: -6px;
+}
+
+.summary-task::before {
+    left: -6px;
+    border-width: 6px 6px 6px 0;
+    border-color: transparent #34495e transparent transparent;
+}
+
+.summary-task::after {
+    right: -6px;
+    border-width: 6px 0 6px 6px;
+    border-color: transparent transparent transparent #34495e;
+}
+
+/* Milestone Styles */
+.milestone {
+    position: absolute;
+    top: 50%; /* Center vertically in 40px row */
+    width: 16px;
+    height: 16px;
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    transform: translate(-50%, -50%) rotate(45deg);
+    cursor: pointer;
+    border: 2px solid #a93226;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.milestone:hover {
+    background: linear-gradient(135deg, #f75c4c 0%, #d0493b 100%);
+    transform: translate(-50%, -50%) rotate(45deg) scale(1.1);
+}
+
+/* Progress indicators */
+.task-bar .progress {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+    border-radius: 2px 0 0 2px;
+    opacity: 0.8;
+}
+
+/* Critical path styling */
+.task-bar.critical {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    border-color: #a93226;
+}
+
+.task-bar.critical:hover {
+    background: linear-gradient(135deg, #f75c4c 0%, #d0493b 100%);
+}
+
+/* Bottom Pane */
+.bottom-pane {
+    background: #fff;
+    border-top: 1px solid #ccc;
+    display: block !important;
+    min-height: 180px;
+}
+
+.tabs {
+    display: flex;
+    background-color: #f7f7f7;
+    border-bottom: 1px solid #ccc;
+}
+
+.tab-button {
+    padding: 10px 15px;
+    cursor: pointer;
+    border: none;
+    background-color: transparent;
+    border-bottom: 2px solid transparent;
+}
+.tab-button.active {
+    border-bottom-color: #007bff;
+    font-weight: bold;
+}
+
+.tab-content {
+    padding: 16px;
+}
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 16px;
+}
+.form-grid label {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: bold;
+    font-size: 14px;
+}
+.form-grid input, .form-grid select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Style for the vertical draggable splitter */
+.splitter {
+    flex: 0 0 5px;
+    background: #ccc;
+    cursor: col-resize;
+    user-select: none; /* Prevent text selection during drag */
+}
+.splitter:hover {
+    background: #007bff; /* Highlight on hover */
+}

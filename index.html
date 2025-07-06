@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Gantt Chart</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .panel-header { padding: 12px 0 12px 0; border-bottom: 1px solid #eee; background: #fafbfc; }
+        .panel-header-row { display: flex; align-items: center; gap: 16px; }
+        .panel-header-label { min-width: 100px; text-align: right; color: #222; }
+        .panel-header-value { min-width: 180px; background: #fff; border: 1px solid #ccc; border-radius: 4px; padding: 4px 10px; margin-right: 24px; font-weight: 500; }
+        .bottom-pane { min-height: 350px; }
+        .rel-table-wrap { max-height: 180px; overflow-y: auto; border-radius: 4px; border: 1px solid #eee; margin-top: 8px; }
+        .rel-table { width: 100%; border-collapse: collapse; }
+        .rel-table th, .rel-table td { border: 1px solid #ddd; padding: 6px 10px; text-align: left; font-size: 14px; }
+        .rel-table th { background: #f4f6fa; font-weight: bold; }
+        .rel-table tr:nth-child(even) { background: #fafbfc; }
+        .status-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 16px; }
+        .status-group { background: #f8fafd; border: 1px solid #e0e0e0; border-radius: 6px; padding: 12px 16px; }
+        .status-group-title { font-weight: bold; margin-bottom: 8px; color: #333; }
+        .status-row { display: flex; align-items: center; margin-bottom: 8px; }
+        .status-label { min-width: 90px; color: #555; font-size: 14px; }
+        .status-value { min-width: 60px; background: #fff; border: 1px solid #ccc; border-radius: 4px; padding: 2px 8px; font-size: 14px; margin-left: 8px; }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button id="import-xer-btn" class="top-bar-btn">Import XER</button>
+        <input type="file" id="xer-file-input" accept=".xer" style="display: none;">
+        <div class="gantt-toolbar">
+            <div class="gantt-scale-selector">
+                <i class="fa-solid fa-calendar-day icon"></i>
+                <select id="gantt-scale-select">
+                    <option value="day">Day</option>
+                    <option value="week">Week</option>
+                    <option value="month">Month</option>
+                    <option value="quarter">Quarter</option>
+                    <option value="year">Year</option>
+                </select>
+            </div>
+            <div class="gantt-zoom-controls">
+                <button id="zoom-out-btn"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+                <button id="zoom-in-btn"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container" id="main-container">
+        <div class="wbs-container" id="wbs-container">
+            <div id="wbs-column-header" class="wbs-header">
+                <!-- WBS headers will be populated by main.js -->
+            </div>
+            <div id="wbs-rows" class="wbs-rows">
+                <!-- WBS rows will be populated by main.js -->
+            </div>
+        </div>
+        <div class="splitter" id="main-splitter"></div>
+        <div class="gantt-container">
+            <div id="timeline-header" class="timeline-header">
+                <!-- Timeline header will be populated by gantt.js -->
+            </div>
+            <div class="gantt-scroll-wrapper" id="gantt-scroll-wrapper">
+                <div id="gantt-body" class="gantt-body">
+                    <div id="gantt-bars" class="gantt-bars">
+                         <!-- Gantt bars will be populated by gantt.js -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Separate horizontal scroll bar -->
+    <div class="horizontal-scroll-container">
+        <div class="horizontal-scroll-spacer"></div>
+        <div class="horizontal-scroll-bar" id="horizontal-scroll-bar">
+            <div class="horizontal-scroll-content" id="horizontal-scroll-content"></div>
+        </div>
+    </div>
+
+    <div class="bottom-pane">
+        <div class="panel-header">
+            <div class="panel-header-row">
+                <div class="panel-header-label"><b>Activity</b></div>
+                <div class="panel-header-value" id="panelActivityId"></div>
+                <div class="panel-header-label"><b>Activity Name</b></div>
+                <div class="panel-header-value" id="panelActivityName"></div>
+                <div class="panel-header-label"><b>Project</b></div>
+                <div class="panel-header-value" id="panelProjectName"></div>
+                <div class="panel-header-label"><b>Start Date</b></div>
+                <div class="panel-header-value" id="panelStartDate"></div>
+                <div class="panel-header-label"><b>Finish Date</b></div>
+                <div class="panel-header-value" id="panelFinishDate"></div>
+                <div class="panel-header-label"><b>Task Count</b></div>
+                <div class="panel-header-value" id="panelTaskCount"></div>
+            </div>
+        </div>
+        <div class="tabs">
+            <button class="tab-button active" onclick="switchTab(this, 'status')">Status</button>
+            <button class="tab-button" onclick="switchTab(this, 'predecessors')">Predecessors</button>
+            <button class="tab-button" onclick="switchTab(this, 'successors')">Successors</button>
+            <button class="tab-button" onclick="switchTab(this, 'resources')">Resources</button>
+            <button class="tab-button" onclick="switchTab(this, 'relationships')">Relationships</button>
+        </div>
+        <div class="tab-content">
+            <div id="statusTab" class="tab-pane active">
+                <div class="status-grid">
+                    <div class="status-group">
+                        <div class="status-group-title">Duration</div>
+                        <div class="status-row"><span class="status-label">Original</span><span class="status-value" id="durationOriginal"></span></div>
+                        <div class="status-row"><span class="status-label">Actual</span><span class="status-value" id="durationActual"></span></div>
+                        <div class="status-row"><span class="status-label">Remaining</span><span class="status-value" id="durationRemaining"></span></div>
+                        <div class="status-row"><span class="status-label">At Complete</span><span class="status-value" id="durationAtComplete"></span></div>
+                    </div>
+                    <div class="status-group">
+                        <div class="status-group-title">Status</div>
+                        <div class="status-row"><span class="status-label">Started</span><span class="status-value" id="statusStarted"></span></div>
+                        <div class="status-row"><span class="status-label">Finished</span><span class="status-value" id="statusFinished"></span></div>
+                        <div class="status-row"><span class="status-label">Exp Finish</span><span class="status-value" id="statusExpFinish"></span></div>
+                        <div class="status-row"><span class="status-label">Duration %</span><span class="status-value" id="statusDurationPct"></span></div>
+                        <div class="status-row"><span class="status-label">Suspend</span><span class="status-value" id="statusSuspend"></span></div>
+                        <div class="status-row"><span class="status-label">Resume</span><span class="status-value" id="statusResume"></span></div>
+                    </div>
+                    <div class="status-group">
+                        <div class="status-group-title">Labor Units</div>
+                        <div class="status-row"><span class="status-label">Budgeted</span><span class="status-value" id="laborBudgeted"></span></div>
+                        <div class="status-row"><span class="status-label">Actual</span><span class="status-value" id="laborActual"></span></div>
+                        <div class="status-row"><span class="status-label">Remaining</span><span class="status-value" id="laborRemaining"></span></div>
+                        <div class="status-row"><span class="status-label">At Complete</span><span class="status-value" id="laborAtComplete"></span></div>
+                    </div>
+                </div>
+                <div class="status-group" style="margin-top: 16px;">
+                    <div class="status-group-title">Constraints</div>
+                    <div class="status-row"><span class="status-label">Primary</span><span class="status-value" id="constraintPrimary"></span></div>
+                    <div class="status-row"><span class="status-label">Secondary</span><span class="status-value" id="constraintSecondary"></span></div>
+                </div>
+            </div>
+            <div id="predecessorsTab" class="tab-pane">
+                <div class="rel-table-wrap">
+                    <table class="rel-table" id="predecessorsTable">
+                        <thead>
+                            <tr>
+                                <th>Activity ID</th>
+                                <th>Activity Name</th>
+                                <th>Relation</th>
+                                <th>Lag</th>
+                                <th>Activity Status</th>
+                                <th>Primary Resource</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="successorsTab" class="tab-pane">
+                <div class="rel-table-wrap">
+                    <table class="rel-table" id="successorsTable">
+                        <thead>
+                            <tr>
+                                <th>Activity ID</th>
+                                <th>Activity Name</th>
+                                <th>Relation</th>
+                                <th>Lag</th>
+                                <th>Activity Status</th>
+                                <th>Primary Resource</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="resourcesTab" class="tab-pane">
+                <div class="rel-table-wrap">
+                    <table class="rel-table" id="resourcesTable">
+                        <thead>
+                            <tr>
+                                <th>Resource ID Name</th>
+                                <th>Primary Resource</th>
+                                <th>Resource Type</th>
+                                <th>Remaining Units / Time</th>
+                                <th>Original Lag</th>
+                                <th>Start</th>
+                                <th>Finish</th>
+                                <th>Budgeted Units</th>
+                                <th>Actual Regular Units</th>
+                                <th>Remaining Early Units</th>
+                                <th>Role</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="relationshipsTab" class="tab-pane">
+                <!-- Relationships content will go here, panel-header sabit kalacak -->
+            </div>
+        </div>
+    </div>
+
+    <script src="js/gantt.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
